@@ -4,19 +4,22 @@ import axios from 'axios';
 function App() {
   const [characters, setCharacters] = useState([]);
   const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     fetchCharacters();
   }, []);
 
   const fetchCharacters = async (page) => {
     const apiUrl = 'http://localhost:80/character';
-
+    setIsLoading(true);
     const result = await axios.get(apiUrl, {
       params: {
         page
       },
     });
     setCharacters(result.data.characters);
+    setIsLoading(false);
     console.log(result);
   };
 
@@ -27,6 +30,7 @@ function App() {
   };
 
   const handlePrev = async () => {
+    if (page <= 1) return;
     const prevPage = page - 1;
     await fetchCharacters(prevPage);
     setPage(prevPage);
@@ -34,6 +38,9 @@ function App() {
 
   return (
     <div className="container">
+      {isLoading ? (
+        <div>Now Loading...</div> 
+      ) : (
       <main>
         <div className="cards-container">
           {characters.map((character) => {
@@ -64,8 +71,9 @@ function App() {
           <button className="prev" onClick={handlePrev}>前へ</button>
           <span className="page-number">{page}</span>
           <button className="next" onClick={handleNext}>次へ</button>
-        </div>
-      </main>
+          </div>
+        </main>
+      )}
     </div>
   );
 } 
