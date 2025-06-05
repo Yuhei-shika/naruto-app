@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
+const limit = 20;
+
 function App() {
   const [characters, setCharacters] = useState([]);
   const [page, setPage] = useState(1);
@@ -12,10 +14,11 @@ function App() {
 
   const fetchCharacters = async (page) => {
     const apiUrl = 'http://localhost:80/character';
+    const limit = 800;
     setIsLoading(true);
     const result = await axios.get(apiUrl, {
       params: {
-        page
+        page, limit
       },
     });
     setCharacters(result.data.characters);
@@ -25,7 +28,21 @@ function App() {
 
   const handleNext = async () => {
     const nextPage = page + 1;
-    await fetchCharacters(nextPage);
+    const apiUrl = 'http://localhost:80/character';
+    
+    setIsLoading(true);
+    const result = await axios.get(apiUrl, {
+      params: {
+        page: nextPage, limit
+      },
+    });
+    setIsLoading(false);
+
+    if (result.data.characters.length === 0) {
+      return;
+    }
+
+    setCharacters(result.data.characters);
     setPage(nextPage);
   };
 
@@ -68,9 +85,9 @@ function App() {
           })}
         </div>
         <div className="pager">
-          <button className="prev" onClick={handlePrev}>前へ</button>
+          <button disabled={page===1}className="prev" onClick={handlePrev}>前へ</button>
           <span className="page-number">{page}</span>
-          <button className="next" onClick={handleNext}>次へ</button>
+          <button disabled={limit > characters.length} className="next" onClick={handleNext}>次へ</button>
           </div>
         </main>
       )}
