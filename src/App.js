@@ -55,6 +55,11 @@ function App() {
 
   return (
     <div className="container">
+      <div className="header">
+        <div className="header-content">
+          <img src="logo.png" alt="Naruto Characters" className="logo"/> 
+        </div>
+      </div>
       {isLoading ? (
         <div>Now Loading...</div> 
       ) : (
@@ -67,11 +72,6 @@ function App() {
                 src={character.images[0] != null ? character.images[0] : 'dummy.png'}
                 alt="character"
                 className="card-image"
-                style={
-                  character.images[0] == null
-                    ? { width: '3000px', height: '3000px', objectFit: 'contain' }
-                    : {}
-                }
               />
               <div className="card-content">
                 <h3 className="card-title">{character.name}</h3>
